@@ -26,6 +26,7 @@ public:
     {
         m_mutex.lock();
         m_storage.insert(val);
+        syslog(LOG_INFO, "Add "+std::to_string(val));
         m_last = val;
         m_mutex.unlock();
     }
