@@ -1,7 +1,6 @@
 #include <QMainWindow>
 #include <QtGui>
 #include <QPushButton>
-#include <QComboBox>
 #include "gui.h"
 
 namespace Ui {
@@ -27,7 +26,7 @@ class GUI::MainWindow : public QMainWindow
     QTimer *m_timer;
 
     QPushButton *m_button;
-    QComboBox *m_comboBox;
+
     GUI *m_gui;
 
     Ui::MainWindow *m_ui;

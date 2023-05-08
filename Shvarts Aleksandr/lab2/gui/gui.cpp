@@ -16,11 +16,9 @@ GUI::MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), m_ui(new Ui:
 void GUI::MainWindow::SetGUI(GUI *gui)
 {
   m_gui = gui;
-  std::string windowName = m_gui->m_name + "[" + std::to_string(getpid()) + "]";
+  std::string windowName =m_gui->m_name + "[" + std::to_string(getpid()) + "]";
   setWindowTitle(windowName.c_str());
-  m_gui->m_name = windowName;
 }
-
 
 void GUI::MainWindow::send()
 {
@@ -30,8 +28,6 @@ void GUI::MainWindow::send()
   output_message += ">> ";
   output_message += m_ui->inputWidget->text().toLocal8Bit().data();
   strncpy(msg.m_message, output_message.c_str(), std::max((int)output_message.size(), (int)STRING_MAX_SIZE));
-  msg.m_sender_pid = getpid();
-  msg.m_recipient_pid = 0;
   m_gui->m_send(msg);
   m_ui->inputWidget->clear();
   m_ui->chatWidget->addItem(output_message.c_str());
@@ -43,12 +39,16 @@ void GUI::MainWindow::tick()
   if (!m_gui->m_is_running())
     this->close();
 
+  // update status
+  if (m_gui->m_isConnected)
+    m_ui->statusbar->showMessage("Partner connected");
+  else
+    m_ui->statusbar->showMessage("Partner not connected");
+
   // update list
   Message msg = {0};
-  while (m_gui->m_get(&msg)){
+  while (m_gui->m_get(&msg))
     m_ui->chatWidget->addItem(msg.m_message);
-
-  }
 }
 
 GUI::MainWindow::~MainWindow()

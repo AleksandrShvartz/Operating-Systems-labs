@@ -64,7 +64,7 @@ void Client::SignalHandler(int signum, siginfo_t *info, void *ptr)
   {
     case SIGUSR1:
     {
-      syslog(LOG_INFO, "Got signal that host is ready");
+      syslog(LOG_INFO, "Got signal that host are ready");
       Client::GetInstance().m_isHostReady = true;
       break;
     }
@@ -104,23 +104,7 @@ void Client::Run(pid_t hostPid)
     syslog(LOG_ERR, "Host %d not present", hostPid);
     return;
   }
-  // wait until get responce from Host
-//  auto clock = std::chrono::high_resolution_clock::now();
-//  while(!m_isHostReady.load()){
-//      double second = std::chrono::duration_cast<std::chrono::seconds>(
-//        std::chrono::high_resolution_clock::now() - clock).count();
-
-//      if (second >= 5)
-//      {
-//        m_isHostReady = false;
-//        m_hostPid = false;
-//        syslog(LOG_ERR, "Handshake goes wrong. Exiting");
-//        Stop();
-//        return;
-//      }
-//      std::this_thread::sleep_for(std::chrono::milliseconds(2));
-//  }
-//  syslog(LOG_ERR, "Handshake complite");
+  syslog(LOG_ERR, "Signal sent");
 
   // run thread with connections
   std::thread connectionThread(&Client::ConnectionWork, this);
@@ -167,7 +151,6 @@ bool Client::ConnectionPrepare(Connection **con, sem_t **sem_read, sem_t **sem_w
   }
   syslog(LOG_INFO, "created semaphore %s", semNameRead.c_str());
   *sem_write = sem_open(semNameWrite.c_str(), 0);
-
   if (*sem_write == SEM_FAILED)
   {
     syslog(LOG_ERR, "Semaphore creation error");

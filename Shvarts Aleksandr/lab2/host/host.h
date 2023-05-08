@@ -21,8 +21,8 @@ private:
     // queue of output messages
     SafeQueue<Message> m_outputMessages;
 
-    // client pids
-    SafeIntSet m_clientPids;
+    // client pid
+    std::atomic<pid_t> m_clientPid = -1;
     // variable for singleton
     static Host m_hostInstance;
     // atomic bool for terminating
@@ -54,7 +54,7 @@ public:
 
     static bool IsRunning(void) { return GetInstance().m_isRunning.load(); }
 
-    static int GetLastClientPid(void) { return GetInstance().m_clientPids.GetLast(); }
+    static pid_t GetClientPid(void) { return GetInstance().m_clientPid; }
 
     void Stop(void);
 

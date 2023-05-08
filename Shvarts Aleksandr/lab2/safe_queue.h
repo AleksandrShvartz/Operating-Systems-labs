@@ -1,56 +1,9 @@
 #ifndef __SAFE_QUEUE_H_
 #define __SAFE_QUEUE_H_
-#include <sys/types.h>
-#include <atomic>
-#include <unordered_set>
+
 #include <queue>
 #include <mutex>
-#include <stdlib.h>
-#include <string.h>
-#include <syslog.h>
-#include <signal.h>
 #include "connections/connection.h"
-class SafeIntSet{
-private:
-    std::unordered_set<int> m_storage;
-    int m_last;
-    mutable std::mutex m_mutex;
-public:
-    bool IsEmpty(){
-         m_mutex.lock();
-        bool res = m_storage.empty();
-        m_mutex.unlock();
-        return res;
-    }
-    void Push(int val)
-    {
-        m_mutex.lock();
-        m_storage.insert(val);
-        syslog(LOG_INFO, "Add %d",val);
-        m_last = val;
-        m_mutex.unlock();
-    }
-    int GetLast()
-    {
-        return m_last;
-    }
-    void TerminateAll(){
-          m_mutex.lock();
-        for (auto it : m_storage) {
-            kill(it, SIGTERM);
-          }
-      m_storage.clear();
-      syslog(LOG_INFO, "Clear clients");
-      m_mutex.unlock();
-    }
-    void Delete(int val)
-    {
-        m_mutex.lock();
-        m_storage.erase(val);
-        m_mutex.unlock();
-    }
-
-};
 
 template <typename T>
 class SafeQueue {
@@ -64,6 +17,7 @@ public:
 		m_storage.push(val);
 		m_mutex.unlock();
 	}
+	
 	bool GetAndRemove(T *msg)
 	{
 		m_mutex.lock();

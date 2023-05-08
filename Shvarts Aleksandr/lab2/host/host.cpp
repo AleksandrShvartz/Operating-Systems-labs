@@ -37,11 +37,15 @@ void Host::SignalHandler(int signum, siginfo_t *info, void *ptr)
     case SIGUSR1:
     {
       syslog(LOG_INFO, "Client %d request connection to host", info->si_pid);
-      Host::GetInstance().m_clientPids.Push(info->si_pid);
+      if (Host::GetInstance().m_clientPid == -1)
+        Host::GetInstance().m_clientPid = info->si_pid;
+      else
+
+        syslog(LOG_INFO, "But host has already client %d", Host::GetInstance().GetClientPid());
+      break;
     }
     case SIGTERM:
     {
-      syslog(LOG_INFO, " %d request SIGTERM", info->si_pid);
       Host::GetInstance().Stop();
       break;
     }
@@ -103,12 +107,12 @@ Host::~Host(void)
 
 bool Host::ConnectionPrepare(Connection **con, sem_t **sem_read, sem_t **sem_write)
 {
-  int m_clientPid = GetLastClientPid();
-  syslog(LOG_INFO, "Start creating connection for client %d", m_clientPid);
+  syslog(LOG_INFO, "Start creating connection for client %d", GetClientPid());
   *con = Connection::CreateConnection(m_clientPid, true);
   if (!*con)
   {
     syslog(LOG_ERR, "Connection creation error");
+    m_clientPid = -1;
     return false;
   }
 
@@ -137,7 +141,7 @@ bool Host::ConnectionPrepare(Connection **con, sem_t **sem_read, sem_t **sem_wri
 
   // send signal that we are ready
   if (kill(m_clientPid, SIGUSR1) != 0)
-    syslog(LOG_ERR, "Cannot send signal to %d", m_clientPid);
+    syslog(LOG_ERR, "Cannot send signal to %d", GetClientPid());
 
   syslog(LOG_INFO, "Signal sent");
   try
@@ -199,26 +203,23 @@ void Host::ConnectionWork()
   try
   {
     printf("host pid = %i\n", getpid());
-
     auto lastTimeWeHadClient = std::chrono::high_resolution_clock::now();
     m_gui->SetConnected(false);
     while (m_isRunning.load())
     {
+      // if this happening for 5 minutes -> exit
+      if (m_clientPid.load() == -1)
+      {
+        auto minutesPassed = std::chrono::duration_cast<std::chrono::minutes>(
+          std::chrono::high_resolution_clock::now() - lastTimeWeHadClient).count();
 
-        // if this happening for 5 minutes -> exit
-        if (m_clientPids.IsEmpty())
+        if (minutesPassed >= 60)
         {
-          auto minutesPassed = std::chrono::duration_cast<std::chrono::minutes>(
-            std::chrono::high_resolution_clock::now() - lastTimeWeHadClient).count();
-
-          if (minutesPassed >= 60)
-          {
-            // we should stop our work
-            printf("Stop because of time");
-            Stop();
-          }
-          continue;
+          // we should stop our work
+          Stop();
         }
+        continue;
+      }
       lastTimeWeHadClient = std::chrono::high_resolution_clock::now();
 
       Connection *currentConnection;
@@ -236,8 +237,9 @@ void Host::ConnectionWork()
 
         if (minutes_passed >= 1)
         {
-          syslog(LOG_INFO, "Killing clients for 1 minute silence");
-          m_clientPids.TerminateAll();
+          syslog(LOG_INFO, "Killing client for 1 minute silence");
+          kill(m_clientPid, SIGTERM);
+          m_clientPid = -1;
           break;
         }
 
@@ -254,8 +256,9 @@ void Host::ConnectionWork()
       ConnectionClose(currentConnection, semaphoreRead, semaphoreWrite);
       m_gui->SetConnected(false);
     }
-    m_clientPids.TerminateAll();
 
+    if (m_clientPid != -1)
+      kill(m_clientPid, SIGTERM);
   }
   catch (std::exception &e)
   {

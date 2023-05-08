@@ -39,9 +39,6 @@
        <widget class="QListWidget" name="chatWidget"/>
       </item>
       <item>
-       <widget class="QComboBox" name="comboBox"/>
-      </item>
-      <item>
        <widget class="QSplitter" name="splitter">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>

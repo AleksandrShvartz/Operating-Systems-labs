@@ -1,10 +1,7 @@
 #ifndef __GUI_H
 #define __GUI_H
 #include <atomic>
-#include <chrono>
-#include <ctime>
-#include <vector>
-#include "../safe_queue.h"
+
 enum
 {
     STRING_MAX_SIZE = 300
@@ -13,8 +10,6 @@ enum
 struct Message
 {
     char m_message[STRING_MAX_SIZE];
-    int m_sender_pid;
-    int m_recipient_pid;
 };
 
 using send_callback = void(*)(Message m);
@@ -24,7 +19,9 @@ using is_running_callback = bool(*)(void);
 class GUI
 {
   private:
-    std::atomic<bool> m_connected;
+    std::atomic<bool> m_isConnected = false;
+
+    // Bad solution I know. But it is hard to compile Qt right way. Sorry.
     class MainWindow;
 
     send_callback m_send;
@@ -38,9 +35,10 @@ class GUI
   public:
     // constructor
     GUI(std::string Name, send_callback SendFunc, get_callback GetFunc, is_running_callback IsRunning) :
-      m_send(SendFunc), m_get(GetFunc), m_is_running(IsRunning), m_name(Name) {}
+      m_send(SendFunc), m_get(GetFunc), m_is_running(IsRunning), m_name(Name) {};
 
-    void SetConnected(bool isConnected) { m_connected = isConnected; }
+    // Set connected status
+    void SetConnected(bool isConnected) { m_isConnected = isConnected; }
 
     // Run main loop function
     int Run(void);
