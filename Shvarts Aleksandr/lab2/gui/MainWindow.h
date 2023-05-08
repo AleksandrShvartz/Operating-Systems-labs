@@ -1,6 +1,7 @@
 #include <QMainWindow>
 #include <QtGui>
 #include <QPushButton>
+#include <QComboBox>
 #include "gui.h"
 
 namespace Ui {

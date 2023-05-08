@@ -4,6 +4,7 @@
 #include <chrono>
 #include <ctime>
 #include <vector>
+#include "../safe_queue.h"
 enum
 {
     STRING_MAX_SIZE = 300
@@ -12,8 +13,7 @@ enum
 struct Message
 {
     char m_message[STRING_MAX_SIZE];
-    std::time_t m_time;
-    // 0 for all 
+    int m_sender_pid;
     int m_recipient_pid;
 };
 
@@ -24,7 +24,7 @@ using is_running_callback = bool(*)(void);
 class GUI
 {
   private:
-    std::atomic<std::vector<std::atomic<int>>> m_connected;
+    SafeIntSet m_connected;
     class MainWindow;
 
     send_callback m_send;
@@ -40,10 +40,8 @@ class GUI
     GUI(std::string Name, send_callback SendFunc, get_callback GetFunc, is_running_callback IsRunning) :
       m_send(SendFunc), m_get(GetFunc), m_is_running(IsRunning), m_name(Name) {}
 
-    // Set connected status
-    void SetConnected(int pid) { m_connected.push_back(pid); }
-
-    void AddRecipient(int pid);
+    // Add connected
+    void SetConnected(int pid) { m_connected.Push(pid); }
     // Run main loop function
     int Run(void);
 

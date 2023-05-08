@@ -37,7 +37,7 @@ void Host::SignalHandler(int signum, siginfo_t *info, void *ptr)
     case SIGUSR1:
     {
       syslog(LOG_INFO, "Client %d request connection to host", info->si_pid);
-      Host::GetInstance().m_clientPids.push_back(info->si_pid);
+      Host::GetInstance().m_clientPids.Push(info->si_pid);
     }
     case SIGTERM:
     {

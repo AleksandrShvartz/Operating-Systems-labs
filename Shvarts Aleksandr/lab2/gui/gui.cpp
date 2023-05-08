@@ -30,6 +30,8 @@ void GUI::MainWindow::send()
   output_message += ">> ";
   output_message += m_ui->inputWidget->text().toLocal8Bit().data();
   strncpy(msg.m_message, output_message.c_str(), std::max((int)output_message.size(), (int)STRING_MAX_SIZE));
+  msg.m_sender_pid = getpid();
+  msg.m_recipient_pid =
   m_gui->m_send(msg);
   m_ui->inputWidget->clear();
   m_ui->chatWidget->addItem(output_message.c_str());
@@ -41,13 +43,6 @@ void GUI::MainWindow::tick()
   if (!m_gui->m_is_running())
     this->close();
 
-  std::string recipient = "";
-  for(int i=0;i!=)
-  if (pid == 0){
-      recipient = "all";
-  } else {
-      recipient = std::to_string(pid);
-  }
   // update list
   Message msg = {0};
   while (m_gui->m_get(&msg)){

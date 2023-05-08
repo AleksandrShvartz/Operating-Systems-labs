@@ -4,6 +4,27 @@
 #include <queue>
 #include <mutex>
 #include "connections/connection.h"
+#include <unordered_set>
+
+class SafeIntSet{
+private:
+    std::queue<int> m_storage;
+    mutable std::mutex m_mutex;
+public:
+    void Push(int val)
+    {
+        m_mutex.lock();
+        m_storage.insert(val);
+        m_mutex.unlock();
+    }
+    void Delete(int val)
+    {
+        m_mutex.lock();
+        m_storage.erase(val);
+        m_mutex.unlock();
+    }
+
+};
 
 template <typename T>
 class SafeQueue {
@@ -17,7 +38,6 @@ public:
 		m_storage.push(val);
 		m_mutex.unlock();
 	}
-	
 	bool GetAndRemove(T *msg)
 	{
 		m_mutex.lock();

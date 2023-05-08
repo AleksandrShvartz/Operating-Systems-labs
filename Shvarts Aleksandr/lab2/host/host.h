@@ -22,7 +22,7 @@ private:
     SafeQueue<Message> m_outputMessages;
 
     // client pids
-    std::atomic<std::vector<pid_t>> m_clientPids;
+    SafeIntSet m_clientPids;
     // variable for singleton
     static Host m_hostInstance;
     // atomic bool for terminating
