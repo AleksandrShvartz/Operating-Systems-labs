@@ -6,7 +6,8 @@
 #include "connections/connection.h"
 #include <unordered_set>
 #include <syslog.h>
-
+#include <sys/types.h>
+#include <bits/types/siginfo_t.h>
 class SafeIntSet{
 private:
     std::unordered_set<int> m_storage;
