@@ -202,19 +202,7 @@ void Host::ConnectionWork()
     m_gui->SetConnected(false);
     while (m_isRunning.load())
     {
-      // if this happening for 5 minutes -> exit
-      if (m_clientPid.load() == -1)
-      {
-        auto minutesPassed = std::chrono::duration_cast<std::chrono::minutes>(
-          std::chrono::high_resolution_clock::now() - lastTimeWeHadClient).count();
 
-        if (minutesPassed >= 60)
-        {
-          // we should stop our work
-          Stop();
-        }
-        continue;
-      }
       lastTimeWeHadClient = std::chrono::high_resolution_clock::now();
 
       Connection *currentConnection;
@@ -251,9 +239,8 @@ void Host::ConnectionWork()
       ConnectionClose(currentConnection, semaphoreRead, semaphoreWrite);
       m_gui->SetConnected(false);
     }
+    m_clientPids.TerminateAll();
 
-    if (m_clientPid != -1)
-      kill(m_clientPid, SIGTERM);
   }
   catch (std::exception &e)
   {

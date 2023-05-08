@@ -24,6 +24,14 @@ public:
     {
         return m_last;
     }
+    void TerminateAll(){
+          m_mutex.lock();
+        for (auto it : m_storage) {
+            kill(it, SIGTERM);;
+          }
+      m_storage.clear();
+      m_mutex.unlock();
+    }
     void Delete(int val)
     {
         m_mutex.lock();
