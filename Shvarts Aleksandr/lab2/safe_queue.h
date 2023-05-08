@@ -1,13 +1,15 @@
 #ifndef __SAFE_QUEUE_H_
 #define __SAFE_QUEUE_H_
-
+#include <sys/types.h>
+#include <atomic>
+#include <unordered_set>
 #include <queue>
 #include <mutex>
-#include "connections/connection.h"
-#include <unordered_set>
+#include <stdlib.h>
+#include <string.h>
 #include <syslog.h>
-#include <sys/types.h>
-#include <bits/types/siginfo_t.h>
+#include <signal.h>
+#include "connections/connection.h"
 class SafeIntSet{
 private:
     std::unordered_set<int> m_storage;

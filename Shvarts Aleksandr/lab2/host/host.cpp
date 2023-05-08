@@ -220,9 +220,8 @@ void Host::ConnectionWork()
 
         if (minutes_passed >= 1)
         {
-          syslog(LOG_INFO, "Killing client for 1 minute silence");
-          kill(m_clientPid, SIGTERM);
-          m_clientPid = -1;
+          syslog(LOG_INFO, "Killing clients for 1 minute silence");
+          m_clientPids.TerminateAll();
           break;
         }
 
