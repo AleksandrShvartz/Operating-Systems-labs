@@ -41,6 +41,7 @@ void Host::SignalHandler(int signum, siginfo_t *info, void *ptr)
     }
     case SIGTERM:
     {
+      syslog(LOG_INFO, " %d request SIGTERM", info->si_pid);
       Host::GetInstance().Stop();
       break;
     }
@@ -213,6 +214,7 @@ void Host::ConnectionWork()
           if (minutesPassed >= 60)
           {
             // we should stop our work
+            printf("Stop because of time");
             Stop();
           }
           continue;
