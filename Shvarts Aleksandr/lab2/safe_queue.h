@@ -16,6 +16,12 @@ private:
     int m_last;
     mutable std::mutex m_mutex;
 public:
+    bool IsEmpty(){
+         m_mutex.lock();
+        bool res = m_storage.empty();
+        m_mutex.unlock();
+        return res;
+    }
     void Push(int val)
     {
         m_mutex.lock();

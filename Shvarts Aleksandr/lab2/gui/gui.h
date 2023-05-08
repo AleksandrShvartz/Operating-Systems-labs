@@ -40,7 +40,7 @@ class GUI
     GUI(std::string Name, send_callback SendFunc, get_callback GetFunc, is_running_callback IsRunning) :
       m_send(SendFunc), m_get(GetFunc), m_is_running(IsRunning), m_name(Name) {}
 
-    void SetConnected(bool isConnected) { m_isConnected = isConnected; }
+    void SetConnected(bool isConnected) { m_connected = isConnected; }
 
     // Run main loop function
     int Run(void);
