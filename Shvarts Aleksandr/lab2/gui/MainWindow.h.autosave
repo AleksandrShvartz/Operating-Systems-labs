@@ -32,3 +32,4 @@ class GUI::MainWindow : public QMainWindow
 
     Ui::MainWindow *m_ui;
 };
+

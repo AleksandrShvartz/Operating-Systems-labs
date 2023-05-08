@@ -54,7 +54,7 @@ public:
 
     static bool IsRunning(void) { return GetInstance().m_isRunning.load(); }
 
-    static int GetLastClientPids(void) { return GetInstance().m_clientPids.GetLast(); }
+    static int GetLastClientPid(void) { return GetInstance().m_clientPids.GetLast(); }
 
     void Stop(void);
 

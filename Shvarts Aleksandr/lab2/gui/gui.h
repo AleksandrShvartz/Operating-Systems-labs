@@ -24,7 +24,7 @@ using is_running_callback = bool(*)(void);
 class GUI
 {
   private:
-    SafeIntSet m_connected;
+    std::atomic<bool> m_connected;
     class MainWindow;
 
     send_callback m_send;
@@ -40,8 +40,8 @@ class GUI
     GUI(std::string Name, send_callback SendFunc, get_callback GetFunc, is_running_callback IsRunning) :
       m_send(SendFunc), m_get(GetFunc), m_is_running(IsRunning), m_name(Name) {}
 
-    // Add connected
-    void SetConnected(int pid) { m_connected.Push(pid); }
+    void SetConnected(bool isConnected) { m_isConnected = isConnected; }
+
     // Run main loop function
     int Run(void);
 
