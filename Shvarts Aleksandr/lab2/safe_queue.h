@@ -8,7 +8,7 @@
 
 class SafeIntSet{
 private:
-    std::queue<int> m_storage;
+    std::unordered_set<int> m_storage;
     mutable std::mutex m_mutex;
 public:
     void Push(int val)
