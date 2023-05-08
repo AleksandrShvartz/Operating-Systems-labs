@@ -64,7 +64,7 @@ void Client::SignalHandler(int signum, siginfo_t *info, void *ptr)
   {
     case SIGUSR1:
     {
-      syslog(LOG_INFO, "Got signal that host are ready");
+      syslog(LOG_INFO, "Got signal that host is ready");
       Client::GetInstance().m_isHostReady = true;
       break;
     }

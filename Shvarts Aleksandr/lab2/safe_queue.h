@@ -26,7 +26,7 @@ public:
     {
         m_mutex.lock();
         m_storage.insert(val);
-        syslog(LOG_INFO, "Add "+std::to_string(val));
+        syslog(LOG_INFO, "Add %d",val);
         m_last = val;
         m_mutex.unlock();
     }
@@ -37,9 +37,10 @@ public:
     void TerminateAll(){
           m_mutex.lock();
         for (auto it : m_storage) {
-            kill(it, SIGTERM);;
+            kill(it, SIGTERM);
           }
       m_storage.clear();
+      syslog(LOG_INFO, "Clear clients");
       m_mutex.unlock();
     }
     void Delete(int val)
