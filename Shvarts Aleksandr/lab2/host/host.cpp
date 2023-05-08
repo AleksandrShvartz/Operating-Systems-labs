@@ -102,7 +102,7 @@ Host::~Host(void)
 
 bool Host::ConnectionPrepare(Connection **con, sem_t **sem_read, sem_t **sem_write)
 {
-  int m_clientPid = GetClientPids().GetLast();
+  int m_clientPid = GetLastClientPid();
   syslog(LOG_INFO, "Start creating connection for client %d", m_clientPid);
   *con = Connection::CreateConnection(m_clientPid, true);
   if (!*con)
