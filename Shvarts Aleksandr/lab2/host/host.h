@@ -54,7 +54,7 @@ public:
 
     static bool IsRunning(void) { return GetInstance().m_isRunning.load(); }
 
-    static std::vector<pid_t> GetClientPid(void) { return GetInstance().m_clientPids; }
+    static SafeIntSet GetClientPids(void) { return GetInstance().m_clientPids; }
 
     void Stop(void);
 

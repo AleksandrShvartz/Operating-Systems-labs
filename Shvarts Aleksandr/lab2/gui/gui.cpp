@@ -31,7 +31,7 @@ void GUI::MainWindow::send()
   output_message += m_ui->inputWidget->text().toLocal8Bit().data();
   strncpy(msg.m_message, output_message.c_str(), std::max((int)output_message.size(), (int)STRING_MAX_SIZE));
   msg.m_sender_pid = getpid();
-  msg.m_recipient_pid =
+  msg.m_recipient_pid = 0;
   m_gui->m_send(msg);
   m_ui->inputWidget->clear();
   m_ui->chatWidget->addItem(output_message.c_str());

@@ -5,17 +5,24 @@
 #include <mutex>
 #include "connections/connection.h"
 #include <unordered_set>
+#include <syslog.h>
 
 class SafeIntSet{
 private:
     std::unordered_set<int> m_storage;
+    int m_last;
     mutable std::mutex m_mutex;
 public:
     void Push(int val)
     {
         m_mutex.lock();
         m_storage.insert(val);
+        m_last = val;
         m_mutex.unlock();
+    }
+    int GetLast()
+    {
+        return m_last;
     }
     void Delete(int val)
     {

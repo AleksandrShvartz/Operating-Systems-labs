@@ -102,12 +102,12 @@ Host::~Host(void)
 
 bool Host::ConnectionPrepare(Connection **con, sem_t **sem_read, sem_t **sem_write)
 {
-  syslog(LOG_INFO, "Start creating connection for client %d", GetClientPid());
+  int m_clientPid = GetClientPids().GetLast();
+  syslog(LOG_INFO, "Start creating connection for client %d", m_clientPid);
   *con = Connection::CreateConnection(m_clientPid, true);
   if (!*con)
   {
     syslog(LOG_ERR, "Connection creation error");
-    m_clientPid = -1;
     return false;
   }
 
@@ -136,7 +136,7 @@ bool Host::ConnectionPrepare(Connection **con, sem_t **sem_read, sem_t **sem_wri
 
   // send signal that we are ready
   if (kill(m_clientPid, SIGUSR1) != 0)
-    syslog(LOG_ERR, "Cannot send signal to %d", GetClientPid());
+    syslog(LOG_ERR, "Cannot send signal to %d", m_clientPid);
 
   syslog(LOG_INFO, "Signal sent");
   try
